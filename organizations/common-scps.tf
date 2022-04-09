@@ -1,6 +1,6 @@
 resource "aws_organizations_policy" "organizations_scp_account_protection" {
   name = "scp_account_protection"
-  description = "scp_account_protection"
+  description = "Stops the organization from being left, and from payments/billing being messed with. Use the root account for these activities only."
   content = <<POLICY
 {
   "Version": "2012-10-17",
@@ -41,7 +41,7 @@ POLICY
 
 resource "aws_organizations_policy" "organizations_scp_logging_protection" {
   name = "scp_logging_services_protection"
-  description = "scp_logging_services_protection"
+  description = "Stops cloudtrail being turned off, protects config rules and recording, keeps guardduty active, and securityhub from being disabled."
   content = <<POLICY
 {
   "Version": "2012-10-17",
@@ -98,7 +98,7 @@ POLICY
 
 resource "aws_organizations_policy" "organizations_scp_iam_protection" {
   name = "scp_iam_protection"
-  description = "scp_iam_protection"
+  description = "Stops creation of IAM users and keys - use SSO for humans and roles for machines."
   content = <<POLICY
 {
   "Version": "2012-10-17",
@@ -121,7 +121,28 @@ POLICY
 
 resource "aws_organizations_policy" "organizations_scp_s3_protection" {
   name = "scp_s3_protection"
-  description = "scp_s3_protection"
+  description = "Stops people allowing public S3 buckets."
+  content = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:PutAccountPublicAccessBlock"
+      ],
+      "Resource": "*",
+      "Effect": "Deny"
+    }
+  ]
+}
+POLICY
+
+}
+
+
+resource "aws_organizations_policy" "organizations_lambda_functionurl_protection" {
+  name = "scp_lambda_function_url_protection"
+  description = "Stops lambda function URLs being created without authentication through IAM."
   content = <<POLICY
 {
   "Version": "2012-10-17",
